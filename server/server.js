@@ -16,9 +16,20 @@ var io = socketIO(server);
 app.use(express.static(publicPath));
 
 // web sockets are a persistent technology. The server-client communication channel is kept open for as long as both of them want to. If either shuts down then the connected is dropped. However, the client will continue to reconnect when the server shuts down.
-// socket represents an individual socket
+// socket represents an individual socket.
+// this file contains node server code therefore we can use arrow functions since we're not writing code for the client in this file
 io.on('connection', (socket) => {
   console.log('New user connected');
+
+  socket.emit('newMessage', {
+    from: 'Jo',
+    text: 'Waddep',
+    createdAt: 123
+  });
+
+  socket.on('createMessage', (message) => {
+    console.log('Message created', message);
+  });
 
   socket.on('disconnect', () => {
     console.log('User was disconnected');
