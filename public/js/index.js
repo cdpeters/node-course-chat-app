@@ -4,11 +4,6 @@
       // no access to a socket argument since we already have it above
       socket.on('connect', function () {
         console.log('Connected to server');
-
-        socket.emit('createMessage', {
-          from: 'Chris',
-          text:'Creme fraiche'
-        });
       });
 
       socket.on('disconnect', function () {
