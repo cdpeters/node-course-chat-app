@@ -24,9 +24,9 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
   // socket.emit emits to a single connection, io.emit emits to every connection
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App'));
+  socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to the Chat App'));
 
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+  socket.broadcast.emit('newMessage', generateMessage('Peary the Ringleader', 'New user joined'));
 
   socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    io.emit('newLocationMessage', generateLocationMessage('Peary the Ringleader', coords.latitude, coords.longitude));
   });
 
 

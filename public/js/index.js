@@ -20,7 +20,7 @@ socket.on('newMessage', function (message) {
 
 socket.on('newLocationMessage', function (message) {
   var li = jQuery('<li></li>');
-  var a = jQuery('<a target="_blank">My Current Location</a>');
+  var a = jQuery('<a target="_blank">here is where I is at</a>');
 
   // safe methods below instead of template strings in the above two variables.
   li.text(`${message.from}: `);
@@ -33,7 +33,7 @@ socket.on('newLocationMessage', function (message) {
 jQuery('#message-form').on('submit', function (e) {
   e.preventDefault();
 
-  var messageTextbox = jQuery('[name=message');
+  var messageTextbox = jQuery('[name=message]');
 
   socket.emit('createMessage', {
     from: 'User',
@@ -48,19 +48,19 @@ var locationButton = jQuery('#send-location');
 // jQuery('#send-location').on is the same as the below:
 locationButton.on('click', function () {
   if (!navigator.geolocation) {
-    return alert('Geolocation not supported by your browser.');
+    return alert('Geolocation not supported by your stinky old browser.');
   }
 
-  locationButton.attr('disabled', 'disabled').text('Sending location...');
+  locationButton.attr('disabled', 'disabled').text('Sending where you is...');
 
   navigator.geolocation.getCurrentPosition(function (position) {
-    locationButton.removeAttr('disabled').text('Send location');
+    locationButton.removeAttr('disabled').text('Send where you is');
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     });
   }, function () {
-    locationButton.removeAttr('disabled').text('Send location');
+    locationButton.removeAttr('disabled').text('Send where you is');
     alert('Unable to fetch location.');
   });
 });
