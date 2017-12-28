@@ -28,10 +28,11 @@ io.on('connection', (socket) => {
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-  socket.on('createMessage', (message) => {
-    console.log('Message created', message);
+  socket.on('createMessage', (message, callback) => {
+    console.log('createMessage', message);
 
     io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('This is from the server');
 
     // broadcast will go to everyone connected except this particular socket
     // socket.broadcast.emit('newMessage', {
