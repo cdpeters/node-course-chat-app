@@ -22,13 +22,33 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
   // socket.emit emits to a single connection, io.emit emits to every connection
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the Chat App',
+    createdAt: new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'new user joined',
+    createdAt: new Date().getTime()
+  });
+
   socket.on('createMessage', (message) => {
     console.log('Message created', message);
+
     io.emit('newMessage', {
       from: message.from,
       text: message.text,
       createdAt: new Date().getTime()
     });
+
+    // broadcast will go to everyone connected except this particular socket
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // })
   });
 
   socket.on('disconnect', () => {
