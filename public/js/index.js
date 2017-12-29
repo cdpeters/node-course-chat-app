@@ -13,23 +13,41 @@ socket.on('disconnect', function () {
 //////////////////////////// new message listener that  receives the new message from the server and creates the list item to be rendered to the client
 socket.on('newMessage', function (message) {
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = jQuery('<li></li>');
-  li.text(`${message.from} ${formattedTime}: ${message.text}`);
+  // html() returns the markup inside message-template
+  var template = jQuery('#message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
 
-  jQuery('#messages').append(li);
+  jQuery('#messages').append(html);
+
+  // var li = jQuery('<li></li>');
+  // li.text(`${message.from} ${formattedTime}: ${message.text}`);
+
+  // jQuery('#messages').append(li);
 });
 
 //////////////////////////// new location message listener that receives the new message from the server and creates the list item with link to be rendered to the client
 socket.on('newLocationMessage', function (message) {
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = jQuery('<li></li>');
-  var a = jQuery('<a target="_blank">here is where I is at</a>');
 
-  // safe methods below instead of template strings in the above two variables.
-  li.text(`${message.from} ${formattedTime}: `);
-  a.attr('href', message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  var template = jQuery('#location-message-template').html();
+  var html = Mustache.render(template, {
+    url: message.url,
+    from: message.from,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
+  // var li = jQuery('<li></li>');
+  // var a = jQuery('<a target="_blank">here is where I is at</a>');
+  // // safe methods below instead of template strings in the above two variables.
+  // li.text(`${message.from} ${formattedTime}: `);
+  // a.attr('href', message.url);
+  // li.append(a);
+  // jQuery('#messages').append(li);
 });
 
 /////////////////////////////////// create message listener that emits the created message on form submission (in the client) and sends it to the server
