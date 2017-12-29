@@ -1,6 +1,22 @@
 // io() is available to us because we loaded in socket.io.js, it is not native to the browser.
 var socket = io();
 
+function scrollToBottom() {
+  // Selectors
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+  // Heights
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+};
+
 // no access to a socket argument since we already have it above
 socket.on('connect', function () {
   console.log('Connected to server');
@@ -22,6 +38,7 @@ socket.on('newMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
 
   // var li = jQuery('<li></li>');
   // li.text(`${message.from} ${formattedTime}: ${message.text}`);
@@ -41,6 +58,7 @@ socket.on('newLocationMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
   // var li = jQuery('<li></li>');
   // var a = jQuery('<a target="_blank">here is where I is at</a>');
   // // safe methods below instead of template strings in the above two variables.
