@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
   // socket.emit emits to a single connection, io.emit emits to every connection
-  socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to Guus Gossip'));
+  socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to Guus Gossip! Where geese get phresh on the hot topics of today.'));
 
   socket.broadcast.emit('newMessage', generateMessage('Peary the Ringleader', 'New user joined'));
 
