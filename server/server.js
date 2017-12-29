@@ -5,6 +5,7 @@ const socketIO = require('socket.io');
 const http = require('http');
 
 const {generateMessage,generateLocationMessage} = require('./utils/message');
+const {isRealString} = require('./utils/validation');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -23,10 +24,21 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  // socket.emit emits to a single connection, io.emit emits to every connection
-  socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to Guus Gossip! Where geese get phresh on the hot topics of today.'));
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      callback('User Name and Flock Name are required');
+    }
 
-  socket.broadcast.emit('newMessage', generateMessage('Peary the Ringleader', 'New user joined'));
+    socket.join(params.room);
+    // socket.leave() leaves a room
+
+      // socket.emit emits to a single connection, io.emit emits to every connection
+    socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to GuusGab! Where geese get phresh on the hot topics of today.'));
+
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Peary the Ringleader', `${params.name} has joined the ${params.room} flock.`));
+
+    callback();
+  });
 
   socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);

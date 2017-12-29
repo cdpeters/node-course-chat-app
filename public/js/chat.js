@@ -19,7 +19,16 @@ function scrollToBottom() {
 
 // no access to a socket argument since we already have it above
 socket.on('connect', function () {
-  console.log('Connected to server');
+  var params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
 });
 
 socket.on('disconnect', function () {
@@ -90,16 +99,16 @@ locationButton.on('click', function () {
     return alert('Geolocation not supported by your stinky old browser.');
   }
 
-  locationButton.attr('disabled', 'disabled').text('Sending where you is...');
+  locationButton.attr('disabled', 'disabled').text('Sending where you is being at on the world...');
 
   navigator.geolocation.getCurrentPosition(function (position) {
-    locationButton.removeAttr('disabled').text('Send where you is');
+    locationButton.removeAttr('disabled').text('Send where you is being at on the world');
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     });
   }, function () {
-    locationButton.removeAttr('disabled').text('Send where you is');
+    locationButton.removeAttr('disabled').text('Send where you is being at on the world');
     alert('Unable to fetch location.');
   });
 });
