@@ -6,6 +6,7 @@ const http = require('http');
 
 const {generateMessage,generateLocationMessage} = require('./utils/message');
 const {isRealString} = require('./utils/validation');
+const {Users} = require('./utils/users');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ var app = express();
 var server = http.createServer(app);
 // io will be used for communication (emmitting and listening for events).
 var io = socketIO(server);
+var users = new Users();
 
 app.use(express.static(publicPath));
 
@@ -26,13 +28,17 @@ io.on('connection', (socket) => {
 
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
-      callback('User Name and Flock Name are required');
+      return callback('User Name and Flock Name are required');
     }
 
     socket.join(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
+
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
     // socket.leave() leaves a room
 
-      // socket.emit emits to a single connection, io.emit emits to every connection
+    // socket.emit emits to a single connection, io.emit emits to every connection
     socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to GuusGab! Where geese get phresh on the hot topics of today.'));
 
     socket.broadcast.to(params.room).emit('newMessage', generateMessage('Peary the Ringleader', `${params.name} has joined the ${params.room} flock.`));
@@ -52,9 +58,14 @@ io.on('connection', (socket) => {
   });
 
 
-
+  ///////////////////////////////// user leaves (disconnects)
   socket.on('disconnect', () => {
-    console.log('User was disconnected');
+    var user = users.removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('Peary the Ringleader', `${user.name} has left the flock.`));
+    }
   });
 });
 
