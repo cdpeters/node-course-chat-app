@@ -39,9 +39,9 @@ io.on('connection', (socket) => {
     // socket.leave() leaves a room
 
     // socket.emit emits to a single connection, io.emit emits to every connection
-    socket.emit('newMessage', generateMessage('Peary the Ringleader', 'Welcome to GuusGab! Where geese get phresh on the hot topics of today.'));
+    socket.emit('newMessage', generateMessage('Admin Guus', 'Welcome to GuusGab! Where geese get phresh on the hot topics of today.'));
 
-    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Peary the Ringleader', `${params.name} has joined the ${params.room} flock.`));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin Guus', `${params.name} has joined the ${params.room} flock.`));
 
     callback();
   });
@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
 
     if (user) {
       io.to(user.room).emit('updateUserList', users.getUserList(user.room));
-      io.to(user.room).emit('newMessage', generateMessage('Peary the Ringleader', `${user.name} has left the flock.`));
+      io.to(user.room).emit('newMessage', generateMessage('Admin Guus', `${user.name} has left the flock.`));
     }
   });
 });
